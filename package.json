@@ -1,0 +1,22 @@
+{
+  "name": "torrent-health-proxy",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/phillmac/torrent-health-proxy.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/phillmac/torrent-health-proxy/issues"
+  },
+  "homepage": "https://github.com/phillmac/torrent-health-proxy#readme",
+  "dependencies": {
+    "async-redis": "^1.1.7"
+  }
+}
