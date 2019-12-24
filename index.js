@@ -19,9 +19,9 @@ redisClient.on('error', function (err) {
   console.error('Redis error', err)
 })
 
-http.createServer(function (req, res) {
+http.createServer(async function (req, res) {
   res.writeHead(200, { 'Content-Type': 'application/json' })
-  const raw = redisClient.hgetall('torrents')
+  const raw = await redisClient.hgetall('torrents')
   const torrents = Object.values(raw).map(t => JSON.parse(t))
   res.end(JSON.stringify(torrents))
 }).listen(3001)
