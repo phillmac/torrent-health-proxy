@@ -14,6 +14,6 @@ const redisClient = asyncRedis.createClient({ host: process.env.REDIS_HOST, port
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'application/json' })
   const raw = redisClient.hgetall('torrents')
-  const torrents = raw.map(t => JSON.parse(t))
+  const torrents = Object.values(raw).map(t => JSON.parse(t))
   res.end(JSON.stringify(torrents))
 }).listen(3001)
