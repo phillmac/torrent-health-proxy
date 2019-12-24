@@ -11,6 +11,14 @@ const http = require('http')
 
 const redisClient = asyncRedis.createClient({ host: process.env.REDIS_HOST, port: parseInt(process.env.REDIS_PORT) })
 
+redisClient.on('connect', function () {
+  console.info('Redis client connected')
+})
+
+redisClient.on('error', function (err) {
+  console.error('Redis error', err)
+})
+
 http.createServer(function (req, res) {
   res.writeHead(200, { 'Content-Type': 'application/json' })
   const raw = redisClient.hgetall('torrents')
