@@ -1,3 +1,5 @@
+'use strict'
+
 if (!process.env.REDIS_HOST) {
   throw Error('REDIS_HOST is required')
 }
@@ -20,8 +22,19 @@ redisClient.on('error', function (err) {
 })
 
 http.createServer(async function (req, res) {
+  const trackerIgnore = await redisClient.smembers('tracker_ignore')
   res.writeHead(200, { 'Content-Type': 'application/json' })
   const raw = await redisClient.hgetall('torrents')
-  const torrents = Object.values(raw).map(t => JSON.parse(t))
+  const torrents = Object.values(raw).map((t) => {
+    const torrent = JSON.parse(t)
+    torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
+
+    for (const i of trackerIgnore) {
+      if (i in torrent.trackerData) {
+        delete torrent.trackerData[i]
+      }
+    }
+    return torrent
+  })
   res.end(JSON.stringify(torrents))
 }).listen(3001)
