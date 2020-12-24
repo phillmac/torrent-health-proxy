@@ -9,7 +9,7 @@ if (!process.env.REDIS_PORT) {
 }
 
 const asyncRedis = require('async-redis')
-const http = require('http')
+const express = require('express')
 
 const redisClient = asyncRedis.createClient({ host: process.env.REDIS_HOST, port: parseInt(process.env.REDIS_PORT) })
 
@@ -21,7 +21,9 @@ redisClient.on('error', function (err) {
   console.error('Redis error', err)
 })
 
-http.createServer(async function (req, res) {
+const app = express()
+
+app.get('/', async (req, res) => {
   const trackerIgnore = await redisClient.smembers('tracker_ignore')
   res.writeHead(200, { 'Content-Type': 'application/json' })
   const raw = await redisClient.hgetall('torrents')
@@ -36,5 +38,9 @@ http.createServer(async function (req, res) {
     }
     return torrent
   })
-  res.end(JSON.stringify(torrents))
-}).listen(3001)
+  res.json(torrents)
+})
+
+app.listen(3001, () => {
+  console.log('listening on port 3001')
+})
