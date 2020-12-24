@@ -45,8 +45,8 @@ app.get('/', async (req, res) => {
 app.get('/hash', async (req, res) => {
   const trackerIgnore = await redisClient.smembers('tracker_ignore')
   const { hash } = req.body
-
   const torrent = JSON.parse(await redisClient.hget('torrents', hash))
+
   if (torrent === null) {
     res.status(404).json('not found')
   } else {
