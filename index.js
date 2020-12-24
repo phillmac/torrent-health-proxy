@@ -47,15 +47,18 @@ app.get('/hash', async (req, res) => {
   const { hash } = req.body
 
   const torrent = JSON.parse(await redisClient.hget('torrents', hash))
+  if (torrent === null) {
+    res.status(404).json('not found')
+  } else {
+    torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
 
-  torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
-
-  for (const i of trackerIgnore) {
-    if (i in torrent.trackerData) {
-      delete torrent.trackerData[i]
+    for (const i of trackerIgnore) {
+      if (i in torrent.trackerData) {
+        delete torrent.trackerData[i]
+      }
     }
+    res.json(torrent)
   }
-  res.json(torrent)
 })
 
 app.listen(3001, () => {
