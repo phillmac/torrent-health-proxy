@@ -23,6 +23,8 @@ redisClient.on('error', function (err) {
 
 const app = express()
 
+app.use(express.json())
+
 app.get('/', async (req, res) => {
   const trackerIgnore = await redisClient.smembers('tracker_ignore')
   const raw = await redisClient.hgetall('torrents')
@@ -38,6 +40,22 @@ app.get('/', async (req, res) => {
     return torrent
   })
   res.json(torrents)
+})
+
+app.get('/hash', async (req, res) => {
+  const trackerIgnore = await redisClient.smembers('tracker_ignore')
+  const { hash } = req.body
+
+  const torrent = JSON.parse(await redisClient.hget('torrents', hash))
+
+  torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
+
+  for (const i of trackerIgnore) {
+    if (i in torrent.trackerData) {
+      delete torrent.trackerData[i]
+    }
+  }
+  res.json(torrent)
 })
 
 app.listen(3001, () => {
