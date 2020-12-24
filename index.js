@@ -25,7 +25,6 @@ const app = express()
 
 app.get('/', async (req, res) => {
   const trackerIgnore = await redisClient.smembers('tracker_ignore')
-  res.writeHead(200, { 'Content-Type': 'application/json' })
   const raw = await redisClient.hgetall('torrents')
   const torrents = Object.values(raw).map((t) => {
     const torrent = JSON.parse(t)
