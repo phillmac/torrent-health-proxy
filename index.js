@@ -31,11 +31,12 @@ app.get('/', async (req, res) => {
   const torrents = Object.values(raw).map((t) => {
     const torrent = JSON.parse(t)
     torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
-
-    for (const i of trackerIgnore) {
-      if (i in torrent.trackerData) {
-        delete torrent.trackerData[i]
-      }
+    if (torrent.trackerData) {
+        for (const i of trackerIgnore) {
+          if (i in torrent.trackerData) {
+            delete torrent.trackerData[i]
+          }
+        }
     }
     return torrent
   })
