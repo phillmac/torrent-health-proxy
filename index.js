@@ -33,7 +33,7 @@ app.get('/', async (req, res) => {
     torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
     if (torrent.trackerData) {
       for (const i of trackerIgnore) {
-        if (i in torrent.trackerData) {
+        if (i in torrent?.trackerData) {
           delete torrent.trackerData[i]
         }
       }
