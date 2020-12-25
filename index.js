@@ -57,7 +57,7 @@ app.get('/hash', async (req, res) => {
     torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
 
     for (const i of trackerIgnore) {
-      if (i in torrent.trackerData) {
+      if (i in torrent?.trackerData) {
         delete torrent.trackerData[i]
       }
     }
