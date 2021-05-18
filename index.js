@@ -27,20 +27,21 @@ app.use(express.json())
 
 app.get('/', async (req, res) => {
   const trackerIgnore = await redisClient.smembers('tracker_ignore')
-  const raw = await redisClient.hgetall('torrents')
-  const torrents = Object.values(raw).map((t) => {
-    const torrent = JSON.parse(t)
-    torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
-    if (torrent.trackerData) {
-      for (const i of trackerIgnore) {
-        if (torrent?.trackerData && i in torrent.trackerData) {
-          delete torrent.trackerData[i]
+  res.json(
+    Object.values(await redisClient.hgetall('torrents'))
+      .map((t) => {
+        const torrent = JSON.parse(t)
+        torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
+        if (torrent.trackerData) {
+          for (const i of trackerIgnore) {
+            if (i in torrent.trackerData) {
+              delete torrent.trackerData[i]
+            }
+          }
         }
-      }
-    }
-    return torrent
-  })
-  res.json(torrents)
+        return torrent
+      })
+  )
 })
 
 app.get('/hash', async (req, res) => {
@@ -56,9 +57,11 @@ app.get('/hash', async (req, res) => {
   } else {
     torrent.trackers = torrent.trackers.filter((tracker) => !(trackerIgnore.includes(tracker)))
 
-    for (const i of trackerIgnore) {
-      if (torrent?.trackerData && i in torrent.trackerData) {
-        delete torrent.trackerData[i]
+    if (torrent.trackerData) {
+      for (const i of trackerIgnore) {
+        if (i in torrent.trackerData) {
+          delete torrent.trackerData[i]
+        }
       }
     }
     res.json(torrent)
