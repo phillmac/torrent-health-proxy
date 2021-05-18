@@ -10,6 +10,7 @@ if (!process.env.REDIS_PORT) {
 
 const asyncRedis = require('async-redis')
 const express = require('express')
+const logResponseTime = require('./response-time-logger')
 
 const redisClient = asyncRedis.createClient({ host: process.env.REDIS_HOST, port: parseInt(process.env.REDIS_PORT) })
 
@@ -24,6 +25,7 @@ redisClient.on('error', function (err) {
 const app = express()
 
 app.use(express.json())
+app.use(logResponseTime)
 
 app.get('/', async (req, res) => {
   const trackerIgnore = await redisClient.smembers('tracker_ignore')
