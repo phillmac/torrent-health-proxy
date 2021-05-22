@@ -70,6 +70,19 @@ app.get('/hash', async (req, res) => {
   }
 })
 
+app.get('/tracker/ignore', async (req, res) => {
+  res.json(await redisClient.smembers('tracker_ignore'))
+})
+
+app.get('/tracker/errors', async (req, res) => {
+  res.json(await redisClient.hgetall('tracker_errors'))
+})
+
+app.get('/tracker/events', async (req, res) => {
+  res.json(await redisClient.hgetall('tracker_events'))
+})
+
+
 app.listen(3001, () => {
   console.log('listening on port 3001')
 })
