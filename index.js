@@ -82,6 +82,10 @@ app.get('/tracker/events', async (req, res) => {
   res.json(await redisClient.hgetall('tracker_events'))
 })
 
+app.get('/queue', async (req, res) => {
+  res.json(await redisClient.smembers('queue'))
+})
+
 
 app.listen(3001, () => {
   console.log('listening on port 3001')
