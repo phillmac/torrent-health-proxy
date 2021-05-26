@@ -17,7 +17,7 @@ const redisClient = asyncRedis.createClient({ host: process.env.REDIS_HOST, port
 const parseJsonArray = (data) => {
   const keys = Object.keys(data)
   return Object.fromEntries(keys
-    .map(k => [k, JSON.parse(data)])
+    .map(k => [k, JSON.parse(data[k])])
   )
 }
 
