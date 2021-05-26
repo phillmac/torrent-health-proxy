@@ -14,6 +14,13 @@ const logResponseTime = require('./response-time-logger')
 
 const redisClient = asyncRedis.createClient({ host: process.env.REDIS_HOST, port: parseInt(process.env.REDIS_PORT) })
 
+const parseJsonArray = (data) => {
+  const keys = Object.keys(data)
+  return Object.fromEntries(keys
+    .map(k => [k, JSON.parse(data)])
+  )
+}
+
 redisClient.on('connect', function () {
   console.info('Redis client connected')
 })
@@ -75,11 +82,19 @@ app.get('/tracker/ignore', async (req, res) => {
 })
 
 app.get('/tracker/errors', async (req, res) => {
-  res.json(await redisClient.hgetall('tracker_errors'))
+  res.json(
+    parseJsonArray(
+      await redisClient.hgetall('tracker_errors')
+    )
+  )
 })
 
 app.get('/tracker/events', async (req, res) => {
-  res.json(await redisClient.hgetall('tracker_events'))
+  res.json(
+    parseJsonArray(
+      await redisClient.hgetall('tracker_events')
+    )
+  )
 })
 
 app.get('/queue', async (req, res) => {
